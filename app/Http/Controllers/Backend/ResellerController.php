@@ -1,14 +1,15 @@
 <?php
 
 namespace App\Http\Controllers\Backend;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Session;
-use Illuminate\Auth\Events\Registered;
+use App\Models\User;
+use App\Models\Order;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 
 class ResellerController extends Controller
 {
@@ -23,7 +24,9 @@ class ResellerController extends Controller
             abort(404);
         }
         $resellers = User::where('role', 7)->where('is_approved', 1)->latest()->get();
-        return view('backend.reseller.index', compact('resellers'));
+        $users = User::where('role', 7)->pluck('id')->toArray();
+        $orders = Order::whereIn('user_id', $users)->get();
+        return view('backend.reseller.index', compact('resellers','orders'));
     }
 
     /**

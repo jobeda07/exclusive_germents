@@ -22,6 +22,12 @@
                             <th scope="col">Wallet Balance</th>
                             <th scope="col">Withdraw Request</th>
                             <th scope="col">Withdraw</th>
+                            <th scope="col">Pending</th>
+                            <th scope="col">Shipped</th>
+                            <th scope="col">Delivered</th>
+                            <th scope="col">Cancelled</th>
+                            <th scope="col">Returned</th>
+                            <th scope="col">Refunded</th>
                             <th scope="col">Status</th>
                             <th scope="col" class="text-end">Action</th>
                         </tr>
@@ -42,6 +48,13 @@
                             <td> {{ $reseller->wallet_balance ?? '' }} </td>
                             <td> {{ $due_withdraw  }} </td>
                             <td> {{ $withdraw }} </td>
+                              
+                            <td> {{ $orders->where('user_id',$reseller->id)->where('delivery_status','pending')->count() }} </td>
+                            <td> {{ $orders->where('user_id',$reseller->id)->where('delivery_status','shipped')->count() }} </td>
+                            <td> {{ $orders->where('user_id',$reseller->id)->where('delivery_status','delivered')->count() }} </td>
+                            <td> {{ $orders->where('user_id',$reseller->id)->where('delivery_status','cancelled')->count() }} </td>
+                            <td> {{ $orders->where('user_id',$reseller->id)->where('delivery_status','returned')->count() }} </td>
+                            <td> {{ $orders->where('user_id',$reseller->id)->where('delivery_status','refunded')->count() }} </td>
                             <td>
                                 @if($reseller->status == 1)
                                   <a href="{{ route('reseller.changeStatus',['id'=>$reseller->id]) }}">

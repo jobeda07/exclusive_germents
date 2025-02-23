@@ -177,7 +177,7 @@
                         <a class="{{ ($route == 'all_orders.index') ? 'active':'' }}" href="{{ route('all_orders.index') }}" >Online Orders</a>
                         <a class="{{ ($route == 'all_orders.indexPos') ? 'active':'' }}" href="{{ route('all_orders.indexPos') }}" >Pos All Orders</a>
                         <a class="{{ ($route == 'all_orders.all_reseller_sale_index') ? 'active':'' }}" href="{{ route('all_orders.all_reseller_sale_index') }}" >All Reseller Orders</a>
-                        <a class="{{ ($route == 'all_orders.all_vendor_sale_index') ? 'active':'' }}" href="{{ route('all_orders.all_vendor_sale_index') }}" >All Vendor Orders</a>
+                        <!--<a class="{{ ($route == 'all_orders.all_vendor_sale_index') ? 'active':'' }}" href="{{ route('all_orders.all_vendor_sale_index') }}" >All Vendor Orders</a>-->
                     @endif
                 </div>
             </li>

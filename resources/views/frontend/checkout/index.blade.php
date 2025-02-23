@@ -75,6 +75,9 @@
             border-radius: 100% !important;
             height: auto !important;
         }
+        textarea{
+            min-height:100px;
+        }
     </style>
 @endpush
 @section('content-frontend')
@@ -130,8 +133,12 @@
                                 <div class="form-group fieldInput col-lg-12">
                                     <label for="address" class="fw-bold text-black"><span
                                             class="required text-danger">*</span> ঠিকানা </label>
-                                    <input required="" type="text" name="address" placeholder="এরিয়া , থানা , জেলা" id="phone"
-                                        value="{{ Auth::user()->address ?? old('address') }}">
+                                            
+                                    <textarea cols="2"  id="address" name="address" placeholder="এরিয়া , থানা , জেলা ">{{ Auth::user()->address ?? old('address') }}</textarea>
+                                            
+                                    <!--<input required=""  type="text" name="address" placeholder="এরিয়া , থানা , জেলা" id="address"-->
+                                    <!--    value="{{ Auth::user()->address ?? old('address') }}">-->
+                                        
                                     @error('address')
                                         <p class="text-danger">{{ $message }}</p>
                                     @enderror

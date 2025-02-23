@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Auth;
 use Image;
 use Session;
-use Auth;
 use App\Models\Order;
 use App\Models\Refund;
 use App\Models\Product;
@@ -14,6 +14,7 @@ use App\Models\ProductStock;
 use Illuminate\Http\Request;
 use App\Models\AttributeValue;
 use Illuminate\Support\Carbon;
+use App\Models\WalletTransaction;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
@@ -209,6 +210,7 @@ class RefundController extends Controller
     public function refund_restock_product($id)
     {
         $refund = Refund::findOrFail($id);
+        $qty = array_sum(explode(',', $refund->product_qty));
         $codes = explode(',', $refund->product_code);
         $Qtys = explode(',', $refund->product_qty);
         $order = Order::where('invoice_no', $refund->invoice_no)->first();
@@ -325,6 +327,24 @@ class RefundController extends Controller
         }
         $refund->approved = 1;
         $refund->save();
+        if ($order) {
+            $wallet_transaction = WalletTransaction::where('order_id', $order->id)->first();
+            if ($wallet_transaction) {
+                $user = \App\Models\User::find($order->user_id);
+                
+                if ($user && $refund->product_qty > 0) {
+                    $amount = ($wallet_transaction->amount / $qty);
+                    if($order->delivery_status=='delivered'){
+                        $user->wallet_balance -= $amount;
+                    }else{
+                        $user->pending_wallet_balance -= $amount;
+                    }
+                    $user->save();
+                }
+            }
+        }
+        $order->delivery_status='refunded';
+        $order->save();
         $notification = array(
             'message' => 'Product Refunded in Stock Successfully.',
             'alert-type' => 'success'

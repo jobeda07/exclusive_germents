@@ -36,6 +36,7 @@
                                     <option value="shipped" @if ($delivery_status =='shipped') selected @endif>Shipped</option>
                                     <option value="delivered" @if ($delivery_status == 'delivered') selected @endif>Delivered</option>
                                     <option value="cancelled" @if ($delivery_status == 'cancelled') selected @endif>Cancelled</option>
+                                    <option value="returned" @if ($delivery_status == 'returned') selected @endif>Returned</option>
                                 </select>
                             </div>
                         </div>
@@ -99,7 +100,7 @@
                                         <td>{{ $order->grand_total }}</td>
                                         <td>{{ $order->collectable_amount - $order->grand_total }}</td>
                                         <td>{{ $order->shipping_charge }}</td>
-                                         <td class="text-center">
+                                            <td class="text-center">
                                                 @if($order->delivery_status == 'cancelled')
                                                     <span class="badge rounded-pill alert-danger">Cancelled</span>
                                                 @elseif($order->delivery_status == 'delivered')
@@ -112,6 +113,8 @@
                                                     <span class="badge rounded-pill alert-primary">Processing</span>
                                                 @elseif($order->delivery_status == 'holding')
                                                     <span class="badge rounded-pill alert-primary">Holding</span>
+                                                @elseif($order->delivery_status == 'returned')
+                                                    <span class="badge rounded-pill"  style="color: #d90f0f; background-color: #d78888; font-weight: bold">Returned</span>
                                                 @else
                                                     <span class="badge rounded-pill alert-info">{{$order->delivery_status}}</span>
                                                 @endif
@@ -154,7 +157,7 @@
                                     @endphp
                                 @endforeach
                             </tbody>
-                            
+
                             <tfoot>
                                 <tr>
                                     <td colspan="3" class="text-center"></td>

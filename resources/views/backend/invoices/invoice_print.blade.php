@@ -61,25 +61,19 @@
     <div class="wrapper"
         style="width: 576px;margin: auto;background-color: white;border: 1px solid #ddd; padding: 10px;">
         <div class="wrapper__header" style="text-align: center;">
-            <span>
-                @php
-                    $logo = get_setting('site_logo');
-                @endphp
-                @if ($logo != null)
-                    <img src="{{ asset(get_setting('site_logo')->value ?? '') }}" alt="{{ env('APP_NAME') }}"
-                         height="30" style="display:inline-block;">
-                @else
-                    <img src="{{ asset('upload/no_image.jpg') }}" alt="{{ env('APP_NAME') }}" height="30"
-                         style="display:inline-block;">
-                @endif
-            </span>
-            <h1 style="margin: 0;font-weight: 600;">{{ get_setting('site_name')->value }}</h1>
-{{--            <p style="font-size: 20px;">Phone: {{ get_setting('phone')->value }}</p>--}}
+            <div style="float:left">
+                <span>
+                   <img style="width:80px" src="{{ asset('invoice-logo.png') }}" />
+                </span>
+            </div>
+            <div>
+                <h1 style="margin: 0;font-weight: 600;">{{ get_setting('site_name')->value }}</h1>
             <span style="font-size: 20px; margin-left: 10px">Phone: {{ get_setting('phone')->value }}</span> <span style="margin-left: 15px; font-size: 20px;">Merchant Id: 51327</span>
             <p style="margin-left: 85px; font-size: 20px">Address: Noyagaw Suchayan Academy School And College. <br />
                 Kamrangichar Dhaka-1211</p>
             <hr style="margin: 0; margin-top: 10px;">
             <a href="{{ route('home') }}"><p style="text-decoration: underline;font-weight: 700;font-size: 16px;">www.exclusivesgarments.com</p></a>
+            </div>
         </div>
 
         <div style="display: flex; justify-content: space-between;">

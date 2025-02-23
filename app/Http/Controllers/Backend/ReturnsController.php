@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Session;
 use Auth;
+use Session;
+use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Returns;
-use App\Models\ProductStock;
 //use Intervention\Image\Facades\Image;
+use App\Models\ProductStock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Models\WalletTransaction;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
@@ -251,6 +253,7 @@ class ReturnsController extends Controller
     public function return_restock_product($id)
     {
         $return = Returns::findOrFail($id);
+        $qty = array_sum(explode(',', $return->product_qty));
         $codes = explode(',', $return->product_code);
         $Qtys = explode(',', $return->product_qty);
         foreach ($codes as $key => $code) {
@@ -275,6 +278,25 @@ class ReturnsController extends Controller
         }
         $return->approved = 1;
         $return->save();
+        $order = Order::find($return->invoice_no);
+        if ($order) {
+            $wallet_transaction = WalletTransaction::where('order_id', $order->id)->first();
+            if ($wallet_transaction){
+                $user = User::find($order->user_id);
+                
+                if ($user && $return->product_qty > 0) {
+                    $amount = ($wallet_transaction->amount / $qty);
+                    if($order->delivery_status=='delivered'){
+                        $user->wallet_balance -= $amount;
+                    }else{
+                        $user->pending_wallet_balance -= $amount;
+                    }
+                    $user->save();
+                }
+            }
+        }
+        $order->delivery_status='returned';
+        $order->save();
         $notification = array(
             'message' => 'Product Returned in Stock Successfully.',
             'alert-type' => 'success'

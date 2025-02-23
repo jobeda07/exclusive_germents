@@ -51,10 +51,10 @@
                         <option value="unpaid" @if ($payment_status == 'unpaid') selected @endif>Unpaid</option>
                         <option value="paid" @if ($payment_status == 'paid') selected @endif>Paid</option>
                     </select>
-                    @if ($delivery_status != 'delivered' && $delivery_status != 'cancelled' && $delivery_status != 'returned')
+                    @if ($delivery_status != 'delivered' && $delivery_status != 'cancelled' && $delivery_status != 'returned' && $delivery_status !='refunded')
                         <select class="form-select d-inline-block mb-lg-0 mr-5 mw-200" id="update_delivery_status">
                             <option value="pending" @if ($delivery_status == 'pending') selected @endif>Pending</option>
-                            <option value="holding" @if ($delivery_status == 'holding') selected @endif>Holding
+                            <option value="picked_up" @if ($delivery_status == 'picked_up') selected @endif>Picked Up
                             </option>
                             <option value="processing" @if ($delivery_status == 'processing') selected @endif>Processing
                             </option>
@@ -226,7 +226,7 @@
                                 </tr>
                                 <tr>
                                     <th>Discount</th>
-                                    <td><input type="number" @if ($order->user_id == 1) readonly @endif
+                                    <td><input type="number" 
                                             class="form-control" name="discount" value="{{ $order->discount }}">
                                     </td>
 
@@ -432,9 +432,10 @@
                                         <td class="text-center qunatity_change">
                                             <input type="hidden" value="{{ $orderDetail->product_id }}" class="product_id">
                                             <input type="hidden" value="{{ $orderDetail->id }}" class="orderdetail_id">
-                                            @if ($orderDetail->is_varient == 1)
+                                            @if ($orderDetail->is_varient == 1 && $stockId)
                                                 <input type="hidden" value="{{ $stockId->id }}" class="stock_id">
                                             @endif
+
                                             <!-- decress btn -->
                                             <button type="button"
                                                 class="input-group-text rounded-0 bg-navy add_btn @if (in_array($delivery_status, ['pending', 'holding', 'processing', 'picked_up','shipped'])) decress_quantity changeQuantity @endif"

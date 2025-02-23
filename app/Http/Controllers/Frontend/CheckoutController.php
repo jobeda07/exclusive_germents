@@ -203,7 +203,7 @@ class CheckoutController extends Controller
             ]);
 
             $user = Auth::user();
-            $user->wallet_balance += $wallet_transaction->amount;
+            $user->pending_wallet_balance += $wallet_transaction->amount;
             $user->save();
         }
 

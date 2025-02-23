@@ -217,7 +217,7 @@ class ProductController extends Controller
                 $make_name = hexdec(uniqid()).'.'.$img->getClientOriginalExtension();
                 Image::make($img)->resize(900,1200)->save('upload/products/multi-image/'.$make_name);
                 $uploadPath = 'upload/products/multi-image/'.$make_name;
-  
+
                 MultiImg::insert([
                     'product_id' => $product->id,
                     'photo_name' => $uploadPath,
@@ -300,7 +300,7 @@ class ProductController extends Controller
                         $image = $request->vimages[$i];
                         if ($image) {
                             $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-                            Image::make($image)->resize(438, 438)->save('upload/products/variations/' . $name_gen);
+                            Image::make($image)->resize(900, 1200)->save('upload/products/variations/' . $name_gen);
                             $stock->image = 'upload/products/variations/' . $name_gen;
                         } else {
                             $stock->image = '';

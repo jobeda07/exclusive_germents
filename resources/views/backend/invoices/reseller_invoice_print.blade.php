@@ -58,18 +58,6 @@
     <div class="wrapper"
         style="width: 576px;margin: auto;background-color: white;border: 1px solid #ddd; padding: 10px;">
         <div class="wrapper__header" style="text-align: center;">
-            <span>
-                @php
-                    $logo = get_setting('site_logo');
-                @endphp
-                @if ($logo != null)
-                    <img src="{{ asset(get_setting('site_logo')->value ?? '') }}" alt="{{ env('APP_NAME') }}"
-                         height="30" style="display:inline-block;">
-                @else
-                    <img src="{{ asset('upload/no_image.jpg') }}" alt="{{ env('APP_NAME') }}" height="30"
-                         style="display:inline-block;">
-                @endif
-            </span>
             <h1 style="margin: 0;font-weight: 600;">{{ get_setting('site_name')->value }}</h1>
             {{--            <p style="font-size: 20px;">Phone: {{ get_setting('phone')->value }}</p>--}}
             <span style="font-size: 20px; margin-left: 10px">Phone: {{ get_setting('phone')->value }}</span> <span style="margin-left: 15px; font-size: 20px;">Merchant Id: 51327</span>

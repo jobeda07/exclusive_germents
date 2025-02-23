@@ -51,7 +51,7 @@
                         <option value="unpaid" @if ($payment_status == 'unpaid') selected @endif>Unpaid</option>
                         <option value="paid" @if ($payment_status == 'paid') selected @endif>Paid</option>
                     </select>
-                    @if ($delivery_status != 'delivered' && $delivery_status != 'cancelled')
+                    @if ($delivery_status != 'delivered' && $delivery_status != 'cancelled' && $delivery_status != 'returned')
                         <select class="form-select d-inline-block mb-lg-0 mr-5 mw-200" id="update_delivery_status">
                             <option value="pending" @if ($delivery_status == 'pending') selected @endif>Pending</option>
                             <option value="holding" @if ($delivery_status == 'holding') selected @endif>Holding
@@ -62,7 +62,10 @@
                             <option value="delivered" @if ($delivery_status == 'delivered') selected @endif>Delivered
                             </option>
                             <option value="cancelled" @if ($delivery_status == 'cancelled') selected @endif
-                                style="color:red">Cancelled
+                            style="color:red">Cancelled
+                            </option>
+                            <option value="returned" @if ($delivery_status == 'returned') selected @endif
+                            style="color:#aa0202; font-weight: bold">Returned
                             </option>
                         </select>
                     @else
@@ -222,13 +225,23 @@
                                     <th>Payment Status</th>
                                     <td>
                                         @php
-                                            $status = $order->delivery_status;
-                                            if ($order->delivery_status == 'cancelled') {
+                                            $status =  $order->delivery_status;
+                                            if ($status == 'cancelled') {
                                                 $status = 'Received';
                                             }
+                                            elseif ($status == 'returned') {
+                                                $receStatus1 = 'Returned';
+                                            }
                                         @endphp
-                                        <span
-                                            class="badge rounded-pill alert-success text-success">{!! $status !!}</span>
+                                        @if(isset($status))
+                                            @if($order->delivery_status != 'returned')
+                                                <span class="badge rounded-pill alert-success text-success">{!! $status !!}</span>
+                                            @endif
+                                        @endif
+                                        @if(isset($receStatus1))
+                                            <span class="badge rounded-pill alert-danger text-danger">{!! $receStatus1 !!}</span>
+                                        @endif
+
                                     </td>
                                 </tr>
                                 <tr>
@@ -399,7 +412,7 @@
                                         <td class="text-center qunatity_change">
                                             <input type="hidden" value="{{ $orderDetail->product_id }}" class="product_id">
                                             <input type="hidden" value="{{ $orderDetail->id }}" class="orderdetail_id">
-                                            @if ($orderDetail->is_varient == 1)
+                                            @if ($orderDetail->is_varient == 1 && $stockId)
                                                 <input type="hidden" value="{{ $stockId->id }}" class="stock_id">
                                             @endif
                                             <!-- decress btn -->

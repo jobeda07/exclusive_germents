@@ -18,6 +18,10 @@
                             <th scope="col">Name</th>
                             <th scope="col">Phone</th>
                             <th scope="col">Email</th>
+                            <th scope="col">Pending Wallet</th>
+                            <th scope="col">Wallet Balance</th>
+                            <th scope="col">Withdraw Request</th>
+                            <th scope="col">Withdraw</th>
                             <th scope="col">Status</th>
                             <th scope="col" class="text-end">Action</th>
                         </tr>
@@ -25,10 +29,19 @@
                     <tbody>
                         @foreach($resellers as $key => $reseller)
                         <tr>
+                            @php
+                               $due_withdraw = App\Models\Withdraw::where('user_id',$reseller->id)->where('status',0)->sum('amount');
+                               $withdraw = App\Models\Withdraw::where('user_id',$reseller->id)->where('status',1)->sum('amount');
+                          @endphp
+                          {{-- @dd($due_withdraw) --}}
                             <td> {{ $key+1}} </td>
                             <td> {{ $reseller->name ?? '' }} </td>
                             <td> {{ $reseller->phone ?? '' }} </td>
                             <td> {{ $reseller->email ?? '' }} </td>
+                            <td> {{ $reseller->pending_wallet_balance ?? '' }} </td>
+                            <td> {{ $reseller->wallet_balance ?? '' }} </td>
+                            <td> {{ $due_withdraw  }} </td>
+                            <td> {{ $withdraw }} </td>
                             <td>
                                 @if($reseller->status == 1)
                                   <a href="{{ route('reseller.changeStatus',['id'=>$reseller->id]) }}">

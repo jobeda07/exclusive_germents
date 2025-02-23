@@ -56,10 +56,16 @@ class UserController extends Controller
         $cancelled = Order::where('user_id', Auth::user()->id)
                         ->where('delivery_status', 'cancel')
                         ->get();
+        $returnProduct = Order::where('user_id', Auth::user()->id)
+                        ->where('delivery_status', 'returned')
+                        ->get();    
+        $refundProduct = Order::where('user_id', Auth::user()->id)
+                        ->where('delivery_status', 'refunded')
+                        ->get();                             
 
-        $returnProduct = Returns::where('customer_id', Auth::user()->id)->get();
-        $refundProduct = Refund::where('customer_id', Auth::user()->id)->get();
-        $due_balance = WalletTransaction::where('user_id', Auth::user()->id)->where('status', 0)->where('type', 1)->sum('amount');
+       // $returnProduct = Returns::where('customer_id', Auth::user()->id)->where('approved', 1)->get();
+       // $refundProduct = Refund::where('customer_id', Auth::user()->id)->where('approved', 1)->get();
+        $due_balance = Withdraw::where('user_id', Auth::user()->id)->where('status', 0)->sum('amount');
         $withdraw = Withdraw::where('user_id',Auth::user()->id)->where('status',1)->sum('amount');
 
         return view('dashboard',compact('orders', 'all', 'pending', 'processing', 'shipping', 'picked', 'completed', 'cancelled', 'returnProduct', 'refundProduct', 'due_balance', 'withdraw' ));
@@ -328,7 +334,7 @@ class UserController extends Controller
             return redirect()->back()->with($notification);
         }
 
-        
+
         else{
             $this->validate($request, [
                 'transition_number' => 'nullable|digits:11',

@@ -773,17 +773,17 @@
             centerPadding: '0px', // Adjust centerPadding to zero
             infinite: true // Enable infinite looping
         });
-
-        $(document).on('click', '.single___thumbnail', function () {
+          $(document).on('click', '.single___thumbnail', function () {
             const newImageUrl = $(this).find('img').attr('src');
             // Update the main image in the slider
             $('.slider-for .product__thumbnail__image img').attr('src', newImageUrl);
             $('.slider-for .product__thumbnail__image a').attr('href', newImageUrl);
-
+    
             // Resume the sliders
             $('.slider-nav').slick('slickPlay');
             $('.slider-for').slick('slickPlay');
         });
+        
     </script>
     <script>
         $(document).ready(function() {
@@ -816,15 +816,6 @@
                     enabled: true
                 }
             });
-        });
-    </script> 
-    <script>
-        // function selectAttribute(){
-        //     alert('lizaa')
-        //    }
-       // selectAttribute()  
-        $(document).ready(function() {
-           
         });
     </script>
 @endpush

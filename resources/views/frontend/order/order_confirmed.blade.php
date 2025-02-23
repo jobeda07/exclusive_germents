@@ -123,16 +123,17 @@
                                                 <th class="text-right">Amount</th>
                                             </tr>
                                         </thead>
-                                        @php
-                                        $quantity = 0;
-                                        $extraPay = 0;
-                                        $extraPay = $order->collectable_amount - $order->grand_total;
-                                        foreach ($order->order_details as $order_detail) {
-                                            $quantity += $order_detail->qty; // Add a semicolon here
-                                        }
-                                        $extra = $extraPay / $quantity;
-                                        $extra = number_format($extra, 2);
-                                    @endphp
+                                         @php
+                                            $quantity = 0;
+                                            $extraPay = 0;
+                                            $extraPay = $order->collectable_amount - $order->grand_total;
+
+                                            foreach ($order->order_details as $order_detail) {
+                                                $quantity += $order_detail->qty;
+                                            }
+
+                                            $extra = $quantity > 0 ? $extraPay / $quantity : 0;
+                                        @endphp
 
                                     <tbody>
                                         @foreach ($order->order_details as $order_detail)
@@ -151,14 +152,14 @@
                                                         </span>
                                                     </div>
                                                 </td>
-                                                <td class="text-center">
-                                                    {{ $order_detail->price+$extra }}
+                                                 <td class="text-center">
+                                                    {{ $order_detail->price + $extra }}
                                                 </td>
                                                 <td class="text-center">
                                                     {{ $order_detail->qty ?? '' }}
                                                 </td>
                                                 <td class="text-right">
-                                                    {{( $order_detail->price * $order_detail->qty)+$extra }}
+                                                    {{( $order_detail->price * $order_detail->qty) + $extra }}
                                                 </td>
                                             </tr>
                                         @endforeach

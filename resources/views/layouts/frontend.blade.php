@@ -274,7 +274,6 @@
                 bottom: 0;
             }
         }
-
     </style>
 </head>
 
@@ -603,9 +602,9 @@
         });
 
         function selectAttribute(id, value, pid, position) {
-            $('.slider-nav').slick('slickPause');
-            $('.slider-for').slick('slickPause');
             //alert(position);
+             $('.slider-nav').slick('slickPause');
+            $('.slider-for').slick('slickPause');
             $('#' + id).val(value);
             var checkVal = $('#attribute_check_' + position).val();
             var checkProduct = $('#attribute_check_attr_' + position).val();
@@ -632,7 +631,8 @@
                     }
                 }
             }
-       
+            
+
             $.ajax({
                 type: 'GET',
                 url: '/varient-price/' + pid + '/' + varient,
@@ -666,10 +666,6 @@
                         const newImageUrl = window.location.origin + '/' + data.stock.image;
                         $('.product__thumbnail__image img').attr('src', newImageUrl);
                         $('.product__thumbnail__image a').attr('href', newImageUrl);
-
-
-
-
                         $('#pvarient').val(varient);
                         $('#product_zoom_img').attr("src", window.location.origin + '/' + data.image);
                         $('#product_zoom_img').attr("srcset", window.location.origin + '/' + data.image);

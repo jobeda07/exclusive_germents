@@ -167,11 +167,19 @@
                                                 <div class="card">
                                                     <p><i class="fa fa-window-close"></i></p>
                                                     <span>REFUND PRODUCTS</span>
-                                                    <p>{{ count($returnProduct) }}</p>
+                                                    <p>{{ count($refundProduct) }}</p>
                                                 </div>
                                             </div>
 
                                             @if ($role == 7)
+                                            <div class="col-lg-4 col-md-4 col-sm-4 col-6 item text-center">
+                                                <div class="card">
+                                                    <p><i class="fas fa-wallet"></i></p>
+                                                    <span>Pending Wallet Balance</span>
+                                                    <p>{{ number_format(auth()->user()->pending_wallet_balance) }}</p>
+                                                    <input type="hidden" class="walletAmount" value="{{auth()->user()->pending_wallet_balance}}">
+                                                </div>
+                                            </div>
                                                 <div class="col-lg-4 col-md-4 col-sm-4 col-6 item text-center">
                                                     <div class="card">
                                                         <p><i class="fas fa-wallet"></i></p>
@@ -180,19 +188,13 @@
                                                         <input type="hidden" class="walletAmount" value="{{auth()->user()->wallet_balance}}">
                                                     </div>
                                                 </div>
-                                            @endif
-
-                                            @if ($role == 7)
                                                 <div class="col-lg-4 col-md-4 col-sm-4 col-6 item text-center">
                                                     <div class="card">
                                                         <p><i class="fas fa-wallet"></i></p>
-                                                        <span>Pending Wallet Balance</span>
+                                                        <span>Pending Withdraw Balance</span>
                                                         <p>{{ number_format($due_balance) }}</p>
                                                     </div>
                                                 </div>
-                                            @endif
-
-                                            @if ($role == 7)
                                                 <div class="col-lg-4 col-md-4 col-sm-4 col-6 item text-center">
                                                     <div class="card">
                                                         <p><i class="fa-solid fa-money-bill-transfer"></i></p>
@@ -220,6 +222,9 @@
                                                                 <th>Date</th>
                                                                 <th>Status</th>
                                                                 <th>Total</th>
+                                                                @if ($role == 7)
+                                                                <th>Collect Total</th>
+                                                               @endif
                                                                 <th>Actions</th>
                                                             </tr>
                                                         </thead>
@@ -230,10 +235,13 @@
                                                                     <tr>
                                                                         <td>{{ $key + 1 }}</td>
                                                                         <td>{{ $order->invoice_no }}</td>
-                                                                        <td>{{ \Carbon\Carbon::parse($order->date)->isoFormat('MMM Do YYYY') }}
+                                                                        <td>{{ \Carbon\Carbon::parse($order->created_at)->isoFormat('MMM Do YYYY') }}
                                                                         </td>
                                                                         <td>{{ ucwords($order->delivery_status) }}</td>
                                                                         <td>{{ $order->grand_total }}</td>
+                                                                        @if ($role == 7)
+                                                                            <td>{{ $order->collectable_amount ?? '' }}</td>
+                                                                          @endif
                                                                         <td><a target="_blank"
                                                                                 href="{{ route('order.view', $order->invoice_no) }}"
                                                                                 class="btn-small d-block">View</a></td>
@@ -923,25 +931,25 @@
                                                                 <label for="name" class="fw-900">Name: <span class="text-danger">*</span></label>
                                                                 <input type="text" name="name" class="form-control" id="name" value="{{ $adminData->name }}" required readonly/>
                                                             </div>
-    
+
                                                             <div class="form-group col-md-6 mb-3">
                                                                 <label for="phone" class="fw-900">Phone:<span class="text-danger">*</span></label>
                                                                 <input type="text" name="phone" class="form-control" id="phone" value="{{ $adminData->phone }}" required readonly/>
                                                             </div>
                                                         </div>
-    
+
                                                         <div class="row">
                                                             <div class="form-group col-md-6 mb-3">
                                                                 <label for="address" class="fw-900">Address : <span class="text-danger">*</span></label>
                                                                 <input type="text" name="address" class="form-control" id="address" value="{{ $adminData->address }}" required readonly/>
                                                             </div>
-    
+
                                                             <div class="form-group col-md-6 mb-3">
                                                                 <label for="transition_number" class="fw-900">BKash Number: <span class="text-danger">*</span></label>
                                                                 <input type="text" name="transition_number" class="form-control" id="transition_number" placeholder="017XX-XXXXXX" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required/>
                                                             </div>
                                                         </div>
-    
+
                                                         <div class="row">
                                                             <div class="form-group col-md-6">
                                                                 <label for="account_type" class="fw-900">Account Type:<span class="text-danger">*</span></label>
@@ -960,7 +968,7 @@
                                                                 <p class="amount-alert" style="color:red"></p>
                                                             </div>
                                                         </div>
-    
+
                                                         <div class="row">
                                                             <div class="form-group col-md-3">
                                                                 <input type="text" name="method" id="method" value="Bkash" required hidden/>
@@ -988,7 +996,7 @@
             </div>
         </div>
     </div>
-    
+
     {{-- model for Nagad --}}
     <div class="modal fade" id="Nogod" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -997,7 +1005,7 @@
                     <h5 class="modal-title" id="exampleModalLabel">Cash Withdraw from Nagad</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-    
+
                 <div class="modal-body">
                     <div class="page-content pt-10 pb-10">
                         <div class="container">
@@ -1014,26 +1022,26 @@
                                                                 <label for="name" class="fw-900">Name: <span class="text-danger">*</span></label>
                                                                 <input type="text" name="name" class="form-control" id="name" value="{{ $adminData->name }}" required readonly/>
                                                             </div>
-    
+
                                                             <div class="form-group col-md-6 mb-3">
                                                                 <label for="phone" class="fw-900">Phone:<span class="text-danger">*</span></label>
                                                                 <input type="text" name="phone" class="form-control" id="phone" value="{{ $adminData->phone }}" required readonly/>
-    
+
                                                             </div>
                                                         </div>
-    
+
                                                         <div class="row">
                                                             <div class="form-group col-md-6 mb-3">
                                                                 <label for="address" class="fw-900">Address : <span class="text-danger">*</span></label>
                                                                 <input type="text" name="address" class="form-control" id="address" value="{{ $adminData->address }}" required readonly/>
                                                             </div>
-    
+
                                                             <div class="form-group col-md-6 mb-3">
                                                                 <label for="transition_number" class="fw-900">Nagad Number: <span class="text-danger">*</span></label>
                                                                 <input type="text" class="form-control" name="transition_number" id="transition_number" placeholder="017XX-XXXXXX" oninput="this.value = this.value.replace(/[^0-9]/g, '')"  required/>
                                                             </div>
                                                         </div>
-    
+
                                                         <div class="row">
                                                             <div class="form-group col-md-6">
                                                                 <label for="account_type" class="fw-900">Account Type:<span class="text-danger">*</span></label>
@@ -1050,10 +1058,10 @@
                                                                 <label for="amount" class="fw-900">Amount<span class="text-danger">*</span></label>
                                                                 <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '')" name="amount" class="form-control walletAmountadd" id="amount" value="0" required/>
                                                                 <p class="amount-alert" style="color:red"></p>
-    
+
                                                             </div>
                                                         </div>
-    
+
                                                         <div class="row">
                                                             <div class="form-group col-md-3">
                                                                 <input type="text" name="method" id="method" value="Nagad" required hidden/>
@@ -1081,7 +1089,7 @@
             </div>
         </div>
     </div>
-    
+
     {{-- model for bank --}}
     <div class="modal fade" id="bank" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -1090,7 +1098,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">Cash Withdraw from Bank</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-    
+
             <div class="modal-body">
                 <div class="page-content pt-10 pb-10">
                     <div class="container">
@@ -1178,7 +1186,7 @@
             </div>
         </div>
     </div>
-    
+
     {{-- Model for cash --}}
     <div class="modal fade" id="cash" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -1187,7 +1195,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">Cash Withdraw</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-    
+
             <div class="modal-body">
                 <div class="page-content pt-10 pb-10">
                     <div class="container">
@@ -1204,13 +1212,13 @@
                                                             <label for="name" class="fw-900">Name: <span class="text-danger">*</span></label>
                                                             <input type="text" name="name" class="form-control" id="name" value="{{ $adminData->name }}" required readonly/>
                                                         </div>
-    
+
                                                         <div class="form-group col-md-6 mb-3">
                                                             <label for="phone" class="fw-900">Phone:<span class="text-danger">*</span></label>
                                                             <input type="text" name="phone" class="form-control" id="phone" value="{{ $adminData->phone }}" required readonly/>
                                                         </div>
                                                     </div>
-    
+
                                                     <div class="row">
                                                         <div class="form-group col-md-6 mb-3">
                                                             <label for="address" class="fw-900">Address : <span class="text-danger">*</span></label>
@@ -1222,7 +1230,7 @@
                                                             <p class="amount-alert" style="color:red"></p>
                                                         </div>
                                                     </div>
-    
+
                                                     <div class="row">
                                                         <div class="form-group col-12">
                                                             <label for="purpose" class="fw-900">Purpose:<span class="text-danger">*</span></label>
@@ -1255,7 +1263,7 @@
             </div>
             </div>
         </div>
-    </div>    
+    </div>
 @endsection
 
 @push('footer-script')

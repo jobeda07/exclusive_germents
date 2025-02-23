@@ -20,6 +20,7 @@ use App\Models\ProductStock;
 use Illuminate\Http\Request;
 use App\Models\AttributeValue;
 use Illuminate\Support\Carbon;
+use App\Models\WalletTransaction;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Backend\Api\SteadfastController;
@@ -523,32 +524,68 @@ class OrderController extends Controller
 
         if ($request->status == 'cancelled') {
             //    return $order->order_details;
-                foreach ($order->order_details as $orderDetail) {
-                    //for product stock update
-                    if( $orderDetail->is_varient){
-                        $jsonData = $orderDetail->variation;
-                        $data = json_decode($jsonData, true);
-                        $attributeValues = [];
-                        foreach ($data as $item) {
-                            $attributeValues[] = $item['attribute_value'];
-                        }
-                        $concatenatedValue = implode('-', $attributeValues);
-                        $productStockId = ProductStock::where('product_id', $orderDetail->product_id)->get();
-                        foreach($productStockId as $productStock){
-                            if($productStock->varient==$concatenatedValue){
-                                $productStock->qty=$productStock->qty+$orderDetail->qty;
-                                $productStock->update();
-                            }
+            foreach ($order->order_details as $orderDetail) {
+                //for product stock update
+                if( $orderDetail->is_varient){
+                    $jsonData = $orderDetail->variation;
+                    $data = json_decode($jsonData, true);
+                    $attributeValues = [];
+                    foreach ($data as $item) {
+                        $attributeValues[] = $item['attribute_value'];
+                    }
+                    $concatenatedValue = implode('-', $attributeValues);
+                    $productStockId = ProductStock::where('product_id', $orderDetail->product_id)->get();
+                    foreach($productStockId as $productStock){
+                        if($productStock->varient==$concatenatedValue){
+                            $productStock->qty=$productStock->qty+$orderDetail->qty;
+                            $productStock->update();
                         }
                     }
-                    $product = Product::find($orderDetail->product_id);
-                    $product->stock_qty = $product->stock_qty + $orderDetail->qty;
-                    $orderDetail->delivery_status = $request->status;
-                    $orderDetail->update();
-                    $product->update();
+                }
+                $product = Product::find($orderDetail->product_id);
+                $product->stock_qty = $product->stock_qty + $orderDetail->qty;
+                $orderDetail->delivery_status = $request->status;
+                $orderDetail->update();
+                $product->update();
 
+            }
+
+            $wallet_transaction = WalletTransaction::where('order_id', $order->id)->first();
+            if ($wallet_transaction){
+                $user = User::find($order->user_id);
+                if($user){
+                    if($order->delivery_status=='delivered'){
+                        $user->wallet_balance -= $wallet_transaction->amount;
+                    }else{
+                        $user->pending_wallet_balance -= $wallet_transaction->amount;
+                    }
+                    $user->save();
                 }
             }
+        }
+        if($request->status == 'delivered'){
+            $wallet_transaction = WalletTransaction::where('order_id',$order->id)->first();
+            if($wallet_transaction){
+                $user = User::find($order->user_id);
+                $user->pending_wallet_balance -= $wallet_transaction->amount;
+                $user->wallet_balance += $wallet_transaction->amount;
+                $user->save();
+            }
+        }
+        if($request->status == 'returned'){
+            $wallet_transaction = WalletTransaction::where('order_id', $order->id)->first();
+            if ($wallet_transaction){
+                $user = User::find($order->user_id);
+                if ($user) {
+                    if($order->delivery_status=='delivered'){
+                        $user->wallet_balance -= $wallet_transaction->amount;
+                    }else{
+                        $user->pending_wallet_balance -= $wallet_transaction->amount;
+                    }
+                    $user->save();
+                }
+            }
+        }
         $order->delivery_status = $request->status;
         $order->save();
 
